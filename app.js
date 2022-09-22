@@ -6,10 +6,6 @@ const Event = require('./models/event')
 const app = express()
 app.use(express.json())
 
-const events = [
-
-]
-
 app.use('/graphql', graphqlHTTP({
     schema: buildSchema(`
         type Event{
