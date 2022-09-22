@@ -8,6 +8,19 @@ const User = require('./models/user')
 const app = express()
 app.use(express.json())
 
+const fuser = async (userid) => {
+    const user = await User.findById(userid)
+    return {
+        ...user._doc,
+        createdEvents: events.bind(this, user.createdEvents)
+    }
+}
+
+const events = async (eventid) => {
+    const events = await Event.find({ _id: { $in: eventid } }).populate('creator')
+    return events
+}
+
 app.use('/graphql', graphqlHTTP({
     schema: buildSchema(`
         type Event{
@@ -16,6 +29,7 @@ app.use('/graphql', graphqlHTTP({
             description: String!
             price: Float!
             date: String!
+            creator: User!
         }
         input CreateEventInput{
             title: String
@@ -28,6 +42,7 @@ app.use('/graphql', graphqlHTTP({
             name: String!
             email: String!
             password: String
+            createdEvents: [Event!]
         }
         input createUser{
             name: String!
@@ -50,7 +65,13 @@ app.use('/graphql', graphqlHTTP({
     rootValue: {
         events: async () => {
             const events = await Event.find()
-            return events
+            const e = events.map((event) => {
+                return {
+                    ...event._doc,
+                    creator: fuser.bind(this, event.creator)
+                }
+            })
+            return e
         },
         createEvent: async (args) => {
             const event = new Event({
@@ -58,13 +79,16 @@ app.use('/graphql', graphqlHTTP({
                 description: args.input.description,
                 price: args.input.price,
                 date: new Date(args.input.date),
-                creater: '632c2d06e91f3a8e7c356b1b'
+                creator: '632c34204a549cb26fae9d97'
             })
             await event.save()
-            const user = await User.findById('632c2d06e91f3a8e7c356b1b')
+            const user = await User.findById('632c34204a549cb26fae9d97')
             user.createdEvents.push(event)
             await user.save()
-            return event
+            return {
+                ...event._doc,
+                creator: fuser.bind(this, event.creator)
+            }
         },
         createUser: async (args) => {
             const checkuser = await User.findOne({ email: args.input.email })
