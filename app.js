@@ -6,8 +6,6 @@ const gqlResolver = require('./graphql/resolver/index')
 const app = express()
 app.use(express.json())
 
-
-
 app.use('/graphql', graphqlHTTP({
     schema: gqlSchema,
     rootValue: gqlResolver,
