@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs')
-const Event = require('../../models/event')
 const User = require('../../models/user')
 const { events } = require('./helper')
 

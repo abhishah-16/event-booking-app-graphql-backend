@@ -24,6 +24,7 @@ const events = async (eventid) => {
         console.log(error);
     }
 }
+
 const eventByID = async (eventid) => {
     try {
         const event = await Event.findById(eventid)
