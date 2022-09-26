@@ -29,7 +29,7 @@ const events = async (eventid) => {
 }
 
 module.exports = {
-    events: async () => {
+    events: async (args, req) => {
         try {
             const events = await Event.find()
             const e = events.map((event) => {
@@ -44,17 +44,20 @@ module.exports = {
             console.log(error);
         }
     },
-    createEvent: async (args) => {
+    createEvent: async (args,req) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthenticated!')
+        }
         try {
             const event = new Event({
                 title: args.input.title,
                 description: args.input.description,
                 price: args.input.price,
                 date: new Date(args.input.date),
-                creator: '632c34204a549cb26fae9d97'
+                creator: req.userId
             })
             await event.save()
-            const user = await User.findById('632c34204a549cb26fae9d97')
+            const user = await User.findById(req.userId)
             user.createdEvents.push(event)
             await user.save()
             return {
