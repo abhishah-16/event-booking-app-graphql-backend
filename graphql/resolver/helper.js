@@ -1,3 +1,5 @@
+const User = require('../../models/user')
+const Event = require('../../models/event')
 const findUser = async (userid) => {
     try {
         const user = await User.findById(userid)
