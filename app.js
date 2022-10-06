@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const { graphqlHTTP } = require('express-graphql');
 const mongoose = require('mongoose')
@@ -11,17 +12,18 @@ app.use(isAuth)
 app.use('/graphql', graphqlHTTP({
     schema: gqlSchema,
     rootValue: gqlResolver,
-    graphiql: true
+    graphiql: true,
+    playground: false,
 }))
 
 app.get('/', (req, res, next) => {
     res.send('GRAPHQL-APP')
 })
 
-mongoose.connect('mongodb+srv://abhishah0196:abhishah@cluster0.w9drn.mongodb.net/event-booking-graphql', () => {
+mongoose.connect(process.env.DB_CONNECTION, () => {
     console.log('CONNECTED TO MONGODB ATLAS :)');
 })
 
-app.listen(4000, () => {
-    console.log('SERVER IS RUNNING ON 4000 :)');
+app.listen(5000, () => {
+    console.log('SERVER IS RUNNING ON 5000 :)');
 })
