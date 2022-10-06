@@ -23,5 +23,6 @@ const eventSchema = new Schema({
         ref: 'User'
     }
 })
+
 const Event = mongoose.model('Event', eventSchema)
 module.exports = Event
